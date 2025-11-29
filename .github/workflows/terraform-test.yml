@@ -1,0 +1,36 @@
+name: Terraform Test
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  terraform-test:
+    name: "Terraform Test"
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout repository
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      # Step 2: Install Terraform CLI
+      - name: Setup Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.7.5
+
+      # Step 3: Initialize Terraform working directory
+      # Creates .terraform folder, downloads providers, etc.
+      - name: Terraform Init
+        run: terraform init
+
+      # Step 4: Check formatting (canonical format)
+      - name: Terraform Format Check
+        run: terraform fmt -check -recursive
+
+      # Step 5: Validate Terraform configuration
+      - name: Terraform Validate
+        run: terraform validate
