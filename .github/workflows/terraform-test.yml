@@ -11,26 +11,37 @@ jobs:
     name: "Terraform Test"
     runs-on: ubuntu-latest
 
+    env:
+      ARM_CLIENT_ID: ${{ secrets.AZURE_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.AZURE_CLIENT_SECRET }}
+      ARM_SUBSCRIPTION_ID: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+      ARM_TENANT_ID: ${{ secrets.AZURE_TENANT_ID }}
+
     steps:
       # Step 1: Checkout repository
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
-      # Step 2: Install Terraform CLI
+      # Step 2: Azure Login (NECESSARY for backend)
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Step 3: Install Terraform CLI
       - name: Setup Terraform
-        uses: hashicorp/setup-terraform@v2
+        uses: hashicorp/setup-terraform@v3
         with:
           terraform_version: 1.7.5
 
-      # Step 3: Initialize Terraform working directory
-      # Creates .terraform folder, downloads providers, etc.
+      # Step 4: Initialize Terraform working directory
       - name: Terraform Init
         run: terraform init
 
-      # Step 4: Check formatting (canonical format)
+      # Step 5: Check formatting
       - name: Terraform Format Check
         run: terraform fmt -check -recursive
 
-      # Step 5: Validate Terraform configuration
+      # Step 6: Validate Terraform configuration
       - name: Terraform Validate
         run: terraform validate
