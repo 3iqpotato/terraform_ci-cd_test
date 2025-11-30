@@ -38,11 +38,12 @@ jobs:
       - name: Terraform Plan
         run: terraform plan -out=tfplan
 
-      - name: Upload Plan Artifact
-        uses: actions/upload-artifact@v3
+      - name: Upload Terraform Plan (Artifact v4)
+        uses: actions/upload-artifact@v4
         with:
           name: tfplan
           path: tfplan
+          retention-days: 1
 
 
   terraform-apply:
@@ -60,8 +61,8 @@ jobs:
       - name: Terraform Init
         run: terraform init
 
-      - name: Download Terraform Plan Artifact
-        uses: actions/download-artifact@v3
+      - name: Download Terraform Plan (Artifact v4)
+        uses: actions/download-artifact@v4
         with:
           name: tfplan
           path: .
